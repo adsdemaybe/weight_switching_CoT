@@ -79,12 +79,19 @@ CACHE CONTINUITY (the whole point) — `router/generation.py`:
   add `lm_head` to target_modules explicitly and drop ensure_weight_tying.
   Verified on 7B: targets = {q,v,embed,lm_head}, lm_head LoRA present.
 
-## Still not done on GB10
-- Three-arm eval (`pipeline.py`) and the sweep have NOT been run against the 7B
-  yet — the old 1.5B results in this file are STALE for the new base. Run
-  `WSC_BASE_MODEL=Qwen/Qwen2.5-7B-Instruct python pipeline.py --per-lang N`.
-  The in-process peft eval loads its own 7B (~15GB) alongside vLLM's ~55GB;
-  both fit in 121GB, or stop the server first to be safe.
+## Running the eval/sweep on GB10 (in progress 2026-08-26)
+- The box is SHARED (another user runs a gaussian-splatting job on the GPU).
+  Be a good neighbour: run the ~16GB in-process eval, and do NOT also hold the
+  ~56GB vLLM server up during heavy compute. Stop vLLM for the sweep, restart
+  after. `serve_vllm.sh` uses `--gpu-memory-utilization 0.45` for this reason.
+- The eval is a per-token Python greedy loop on 7B (one forward per token — the
+  price of in-process mid-gen switching; vLLM's batching is unavailable to it).
+  ~2-3 items/min, so 100 items x 3 arms is ~hours and a full sweep is longer.
+  `stop_on_answer` DOES fire (breaks on the `Answer:` line), so gens aren't
+  running the full 512 — the slowness is inherent per-token overhead.
+- Current run (detached, `~/run.log`): `pipeline.py --per-lang 5` then
+  `optimize.py --per-lang 3 --patience 2`, `WSC_BASE_MODEL=...7B-Instruct`.
+- The old 1.5B numbers earlier in this file are STALE for the 7B base.
 - vLLM serves the base only; the routing cache-sharing swap still runs
   in-process via peft (vLLM cannot do it — see Notes/Constraints).
 
@@ -208,6 +215,16 @@ A VALID SWEEP HAS STILL NOT BEEN RUN.
 Note that (2) and (3) both fail *toward* a flattering efficiency number. Be
 suspicious of any large token-efficiency win that is not accompanied by intact
 reasoning traces.
+4. Odia adapter silently loaded as ZERO. The code `or` is a substring of the
+   literal `lora_`, so PEFT's key handling collided and `set_peft_model_state_dict`
+   never wrote the weights — the Odia "expert" was the bare base, untrained.
+   PEFT only *warns* ("Adapter name 'or' should not be contained in the prefix
+   'lora_'"), so it passed silently through the 1.5B Kaggle run too. Fixed:
+   `peft_name(code)` maps every expert to `e_<code>` at all add/get/set/
+   set_adapter sites (model_manager + train_experts). Saved safetensors are
+   name-independent (canonical keys), so the 20 existing files load unchanged —
+   no re-save. Verified on 7B: 0 collision warnings, `or` lora_B sum 403.3
+   (was 0). Regression test `test_odia_adapter_name_avoids_lora_collision`.
 
 # Notes / Constraints
 - Mid-generation weight switching over a shared KV cache requires in-process
