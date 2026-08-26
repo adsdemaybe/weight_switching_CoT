@@ -1,0 +1,8 @@
+torch
+transformers
+accelerate
+peft
+datasets
+huggingface_hub
+sentencepiece
+langid

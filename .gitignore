@@ -1,0 +1,18 @@
+# Python envs (rebuilt per-machine; GB10 uses uv-managed CPython)
+.venv/
+.venv-vllm/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Trained LoRA weights — large binaries, machine-specific base (1.5B local vs
+# 7B on GB10). Not versioned here; use git-lfs if weight history is wanted.
+adapters/
+*.safetensors
+
+# Runtime logs / HF cache / OS cruft
+*.log
+.DS_Store
+.cache/
+*.original.md

@@ -1,0 +1,520 @@
+[
+  {
+    "config": {
+      "check_every": 4,
+      "window_chars": 64,
+      "min_chars": 4,
+      "latin_min_chars": 40,
+      "latin_min_conf": 0.9,
+      "switch_patience": 1,
+      "stop_on_answer": true,
+      "max_new_tokens": 512,
+      "recompute_on_switch": false
+    },
+    "config_source": "default",
+    "baseline": {
+      "accuracy": 0.34,
+      "avg_gen_tokens": 303.22,
+      "avg_total_processed": 471.84,
+      "avg_dispatch_processed": 471.84,
+      "avg_prefill_saved": 0.0,
+      "token_saving_ratio": 0.0,
+      "avg_switches": 0.0,
+      "n": 100,
+      "unanswered": null,
+      "per_lang": {
+        "ar": {
+          "acc": 0.2,
+          "avg_gen": 323.2,
+          "avg_proc": 446.2,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "bn": {
+          "acc": 0.6,
+          "avg_gen": 194.0,
+          "avg_proc": 390.4,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "de": {
+          "acc": 0.0,
+          "avg_gen": 407.2,
+          "avg_proc": 533.0,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "en": {
+          "acc": 0.4,
+          "avg_gen": 145.8,
+          "avg_proc": 258.4,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "es": {
+          "acc": 0.0,
+          "avg_gen": 411.6,
+          "avg_proc": 532.6,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "fr": {
+          "acc": 0.2,
+          "avg_gen": 445.4,
+          "avg_proc": 567.4,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "gu": {
+          "acc": 0.2,
+          "avg_gen": 253.2,
+          "avg_proc": 484.8,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "hi": {
+          "acc": 0.2,
+          "avg_gen": 267.0,
+          "avg_proc": 434.6,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "it": {
+          "acc": 0.0,
+          "avg_gen": 458.6,
+          "avg_proc": 582.8,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "ja": {
+          "acc": 0.2,
+          "avg_gen": 356.2,
+          "avg_proc": 477.8,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "kn": {
+          "acc": 0.6,
+          "avg_gen": 270.4,
+          "avg_proc": 494.6,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "ko": {
+          "acc": 0.0,
+          "avg_gen": 392.8,
+          "avg_proc": 513.0,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "ml": {
+          "acc": 0.6,
+          "avg_gen": 336.8,
+          "avg_proc": 568.6,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "mr": {
+          "acc": 0.6,
+          "avg_gen": 179.8,
+          "avg_proc": 350.6,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "or": {
+          "acc": 0.6,
+          "avg_gen": 238.2,
+          "avg_proc": 498.8,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "pa": {
+          "acc": 0.8,
+          "avg_gen": 147.2,
+          "avg_proc": 383.4,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "pt": {
+          "acc": 0.4,
+          "avg_gen": 419.2,
+          "avg_proc": 540.8,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "ta": {
+          "acc": 0.6,
+          "avg_gen": 252.2,
+          "avg_proc": 464.0,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "te": {
+          "acc": 0.2,
+          "avg_gen": 234.4,
+          "avg_proc": 470.0,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "zh": {
+          "acc": 0.4,
+          "avg_gen": 331.2,
+          "avg_proc": 445.0,
+          "avg_switches": 0.0,
+          "n": 5
+        }
+      }
+    },
+    "router": {
+      "accuracy": 0.3,
+      "avg_gen_tokens": 297.63,
+      "avg_total_processed": 466.25,
+      "avg_dispatch_processed": 835.29,
+      "avg_prefill_saved": 369.04,
+      "token_saving_ratio": 0.441810628643944,
+      "avg_switches": 1.5,
+      "n": 100,
+      "unanswered": null,
+      "per_lang": {
+        "ar": {
+          "acc": 0.4,
+          "avg_gen": 373.2,
+          "avg_proc": 496.2,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "bn": {
+          "acc": 0.4,
+          "avg_gen": 175.2,
+          "avg_proc": 371.6,
+          "avg_switches": 1.2,
+          "n": 5
+        },
+        "de": {
+          "acc": 0.0,
+          "avg_gen": 427.4,
+          "avg_proc": 553.2,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "en": {
+          "acc": 0.4,
+          "avg_gen": 145.8,
+          "avg_proc": 258.4,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "es": {
+          "acc": 0.2,
+          "avg_gen": 402.4,
+          "avg_proc": 523.4,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "fr": {
+          "acc": 0.2,
+          "avg_gen": 446.2,
+          "avg_proc": 568.2,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "gu": {
+          "acc": 0.4,
+          "avg_gen": 182.8,
+          "avg_proc": 414.4,
+          "avg_switches": 1.4,
+          "n": 5
+        },
+        "hi": {
+          "acc": 0.2,
+          "avg_gen": 209.0,
+          "avg_proc": 376.6,
+          "avg_switches": 1.0,
+          "n": 5
+        },
+        "it": {
+          "acc": 0.0,
+          "avg_gen": 486.0,
+          "avg_proc": 610.2,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "ja": {
+          "acc": 0.2,
+          "avg_gen": 382.0,
+          "avg_proc": 503.6,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "kn": {
+          "acc": 0.2,
+          "avg_gen": 267.2,
+          "avg_proc": 491.4,
+          "avg_switches": 2.0,
+          "n": 5
+        },
+        "ko": {
+          "acc": 0.0,
+          "avg_gen": 381.2,
+          "avg_proc": 501.4,
+          "avg_switches": 2.2,
+          "n": 5
+        },
+        "ml": {
+          "acc": 0.2,
+          "avg_gen": 324.6,
+          "avg_proc": 556.4,
+          "avg_switches": 2.0,
+          "n": 5
+        },
+        "mr": {
+          "acc": 0.6,
+          "avg_gen": 177.4,
+          "avg_proc": 348.2,
+          "avg_switches": 1.0,
+          "n": 5
+        },
+        "or": {
+          "acc": 0.4,
+          "avg_gen": 227.8,
+          "avg_proc": 488.4,
+          "avg_switches": 1.0,
+          "n": 5
+        },
+        "pa": {
+          "acc": 0.6,
+          "avg_gen": 153.6,
+          "avg_proc": 389.8,
+          "avg_switches": 0.8,
+          "n": 5
+        },
+        "pt": {
+          "acc": 0.4,
+          "avg_gen": 419.2,
+          "avg_proc": 540.8,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "ta": {
+          "acc": 0.2,
+          "avg_gen": 247.8,
+          "avg_proc": 459.6,
+          "avg_switches": 2.6,
+          "n": 5
+        },
+        "te": {
+          "acc": 0.4,
+          "avg_gen": 206.6,
+          "avg_proc": 442.2,
+          "avg_switches": 1.4,
+          "n": 5
+        },
+        "zh": {
+          "acc": 0.6,
+          "avg_gen": 317.2,
+          "avg_proc": 431.0,
+          "avg_switches": 0.8,
+          "n": 5
+        }
+      }
+    },
+    "router_recomputed": {
+      "accuracy": 0.29,
+      "avg_gen_tokens": 304.24,
+      "avg_total_processed": 826.76,
+      "avg_dispatch_processed": 826.76,
+      "avg_prefill_saved": 0.0,
+      "token_saving_ratio": 0.0,
+      "avg_switches": 1.47,
+      "n": 100,
+      "unanswered": null,
+      "per_lang": {
+        "ar": {
+          "acc": 0.4,
+          "avg_gen": 367.2,
+          "avg_proc": 828.4,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "bn": {
+          "acc": 0.6,
+          "avg_gen": 195.4,
+          "avg_proc": 690.0,
+          "avg_switches": 1.2,
+          "n": 5
+        },
+        "de": {
+          "acc": 0.0,
+          "avg_gen": 437.6,
+          "avg_proc": 921.2,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "en": {
+          "acc": 0.4,
+          "avg_gen": 145.8,
+          "avg_proc": 258.4,
+          "avg_switches": 0.0,
+          "n": 5
+        },
+        "es": {
+          "acc": 0.0,
+          "avg_gen": 411.0,
+          "avg_proc": 871.4,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "fr": {
+          "acc": 0.2,
+          "avg_gen": 445.2,
+          "avg_proc": 902.8,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "gu": {
+          "acc": 0.2,
+          "avg_gen": 210.0,
+          "avg_proc": 843.2,
+          "avg_switches": 1.4,
+          "n": 5
+        },
+        "hi": {
+          "acc": 0.2,
+          "avg_gen": 269.6,
+          "avg_proc": 616.8,
+          "avg_switches": 1.0,
+          "n": 5
+        },
+        "it": {
+          "acc": 0.2,
+          "avg_gen": 502.0,
+          "avg_proc": 1233.2,
+          "avg_switches": 2.0,
+          "n": 5
+        },
+        "ja": {
+          "acc": 0.0,
+          "avg_gen": 374.2,
+          "avg_proc": 815.0,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "kn": {
+          "acc": 0.2,
+          "avg_gen": 250.4,
+          "avg_proc": 860.8,
+          "avg_switches": 1.4,
+          "n": 5
+        },
+        "ko": {
+          "acc": 0.0,
+          "avg_gen": 417.2,
+          "avg_proc": 950.8,
+          "avg_switches": 2.2,
+          "n": 5
+        },
+        "ml": {
+          "acc": 0.6,
+          "avg_gen": 265.8,
+          "avg_proc": 1073.0,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "mr": {
+          "acc": 0.6,
+          "avg_gen": 177.6,
+          "avg_proc": 531.2,
+          "avg_switches": 1.0,
+          "n": 5
+        },
+        "or": {
+          "acc": 0.2,
+          "avg_gen": 216.6,
+          "avg_proc": 749.8,
+          "avg_switches": 1.0,
+          "n": 5
+        },
+        "pa": {
+          "acc": 0.8,
+          "avg_gen": 105.6,
+          "avg_proc": 541.2,
+          "avg_switches": 0.8,
+          "n": 5
+        },
+        "pt": {
+          "acc": 0.2,
+          "avg_gen": 411.8,
+          "avg_proc": 863.0,
+          "avg_switches": 1.8,
+          "n": 5
+        },
+        "ta": {
+          "acc": 0.2,
+          "avg_gen": 324.2,
+          "avg_proc": 1547.0,
+          "avg_switches": 2.6,
+          "n": 5
+        },
+        "te": {
+          "acc": 0.4,
+          "avg_gen": 241.0,
+          "avg_proc": 903.4,
+          "avg_switches": 1.4,
+          "n": 5
+        },
+        "zh": {
+          "acc": 0.4,
+          "avg_gen": 316.6,
+          "avg_proc": 534.6,
+          "avg_switches": 0.8,
+          "n": 5
+        }
+      }
+    },
+    "sources": {
+      "bn": "murthyrudra/milu-cleaned",
+      "gu": "murthyrudra/milu-cleaned",
+      "hi": "murthyrudra/milu-cleaned",
+      "kn": "murthyrudra/milu-cleaned",
+      "ml": "murthyrudra/milu-cleaned",
+      "mr": "murthyrudra/milu-cleaned",
+      "or": "murthyrudra/milu-cleaned",
+      "pa": "murthyrudra/milu-cleaned",
+      "ta": "murthyrudra/milu-cleaned",
+      "te": "murthyrudra/milu-cleaned",
+      "en": "murthyrudra/milu-cleaned",
+      "zh": "openai/MMMLU",
+      "ja": "openai/MMMLU",
+      "ko": "openai/MMMLU",
+      "de": "openai/MMMLU",
+      "fr": "openai/MMMLU",
+      "es": "openai/MMMLU",
+      "it": "openai/MMMLU",
+      "pt": "openai/MMMLU",
+      "ar": "openai/MMMLU"
+    },
+    "experts": [
+      "ar",
+      "bn",
+      "de",
+      "en",
+      "es",
+      "fr",
+      "gu",
+      "hi",
+      "it",
+      "ja",
+      "kn",
+      "ko",
+      "ml",
+      "mr",
+      "or",
+      "pa",
+      "pt",
+      "ta",
+      "te",
+      "zh"
+    ],
+    "per_lang_items": 5
+  }
+]
