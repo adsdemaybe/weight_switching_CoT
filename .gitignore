@@ -14,5 +14,7 @@ adapters/
 # Runtime logs / HF cache / OS cruft
 *.log
 .DS_Store
+._*
+.AppleDouble
 .cache/
 *.original.md
