@@ -21,6 +21,23 @@ BASE_MODEL = os.environ.get("WSC_BASE_MODEL", "Qwen/Qwen2.5-1.5B-Instruct")
 ADAPTER_DIR = os.path.join(os.path.dirname(__file__), "..", "adapters")
 
 
+def peft_name(code):
+    """Internal PEFT adapter name for a language `code`.
+
+    PEFT keys its LoRA parameters as `...lora_A.<adapter_name>...`. If the
+    adapter name is itself a substring of the literal `"lora_"` — which the
+    Odia code `"or"` is — PEFT's key handling collides and silently fails to
+    load that adapter's weights, leaving it at zero-init (an untrained expert
+    that behaves like the bare base). It warns:
+      "Adapter name 'or' should not be contained in the prefix 'lora_'".
+    Prefixing every expert name with `e_` sidesteps it for any such code. The
+    saved safetensors are unaffected: `get_peft_model_state_dict` returns
+    canonical, adapter-name-free keys, so files written under the old name
+    load fine under the new one. `_base` is left as-is (never collides).
+    """
+    return code if code == "_base" else "e_" + code
+
+
 def _device():
     if torch.cuda.is_available():
         return "cuda"
@@ -121,7 +138,7 @@ class ExpertManager:
         """
         path = path or os.path.join(self.adapter_dir, code, "lora.safetensors")
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        state = get_peft_model_state_dict(self.model, adapter_name=code)
+        state = get_peft_model_state_dict(self.model, adapter_name=peft_name(code))
         lora_only = {k: v.detach().cpu().contiguous()
                      for k, v in state.items() if "lora_" in k}
         save_file(lora_only, path)
@@ -129,10 +146,11 @@ class ExpertManager:
 
     def load_expert(self, code, path=None):
         path = path or os.path.join(self.adapter_dir, code, "lora.safetensors")
-        if code not in self.model.peft_config:
-            self.model.add_adapter(code, self.seed_cfg)
+        aname = peft_name(code)
+        if aname not in self.model.peft_config:
+            self.model.add_adapter(aname, self.seed_cfg)
         state = load_file(path)
-        set_peft_model_state_dict(self.model, state, adapter_name=code)
+        set_peft_model_state_dict(self.model, state, adapter_name=aname)
         self.loaded.add(code)
         return code
 
@@ -144,6 +162,6 @@ class ExpertManager:
         has no trained adapter yet — falls back to the unmodified base."""
         target = lang if lang in self.loaded else "_base"
         if target != self.active:
-            self.model.set_adapter(target)
+            self.model.set_adapter(peft_name(target))
             self.active = target
         return self.active

@@ -18,7 +18,7 @@ import torch
 from torch.optim import AdamW
 
 from .benchmarks import ALL_LANGS, load_language
-from .model_manager import ExpertManager
+from .model_manager import ExpertManager, peft_name
 
 
 def _language_text(row):
@@ -46,9 +46,10 @@ def train_one_language(manager, code, rows, steps=60, lr=1e-5):
     # 1e-5 leaves the chat/CoT behaviour intact — verified before training.
     model = manager.model
 
-    if code not in model.peft_config:
-        model.add_adapter(code, model.peft_config["_base"])
-    model.set_adapter(code)
+    aname = peft_name(code)
+    if aname not in model.peft_config:
+        model.add_adapter(aname, model.peft_config["_base"])
+    model.set_adapter(aname)
     manager.active = code
     model.train()
 
