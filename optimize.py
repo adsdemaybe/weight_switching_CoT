@@ -132,15 +132,42 @@ def main():
             print(f"\nPlateau: no improvement in {args.patience} consecutive rounds.")
             break
 
+    # Held-out confirmation. `best` was SELECTED by its validation score across
+    # many configs, so that score is optimistic — selection fits validation
+    # noise. Re-score the winner once on a `test` split used for NEITHER
+    # training NOR tuning; this is the honest generalization number and the one
+    # to report. A positive validation-minus-test gap is the selection bias.
+    held_out = None
+    test_items, test_sources = load_eval_set(limit_per_lang=args.per_lang,
+                                             split="test")
+    if test_items:
+        tr = evaluate(manager, test_items, route=True, cfg=best,
+                      label="held-out-test")
+        held_out = summarize(tr)
+        gap = best_score[0] - tr["accuracy"]
+        print(f"\nHeld-out TEST (winning config on unseen data): "
+              f"acc={tr['accuracy']:.3f}  tok={tr['avg_total_processed']:.0f}  "
+              f"sw={tr['avg_switches']:.2f}")
+        print(f"  validation acc {best_score[0]:.3f} -> test acc "
+              f"{tr['accuracy']:.3f}  (selection bias {gap:+.3f})")
+    else:
+        print("\nHeld-out TEST set empty (fixture mode?) — skipping confirmation.")
+
     os.makedirs(RESULTS_DIR, exist_ok=True)
     with open(SWEEP_PATH, "w") as f:
         json.dump({"sources": sources, "best": best.to_dict(),
                    "best_score": {"accuracy": best_score[0],
                                   "avg_total_processed": -best_score[1]},
+                   "held_out_test": held_out,
+                   "test_sources": test_sources if test_items else None,
                    "history": history}, f, indent=2, ensure_ascii=False)
 
     print(f"\nBest config: {best.to_dict()}")
-    print(f"Best accuracy: {best_score[0]:.3f}  avg_total_processed: {-best_score[1]:.0f}")
+    print(f"Best (validation) accuracy: {best_score[0]:.3f}  "
+          f"avg_total_processed: {-best_score[1]:.0f}")
+    if held_out:
+        print(f"Held-out test accuracy : {held_out['accuracy']:.3f}  "
+              f"(report THIS as the generalization result)")
     print(f"Sweep written to {SWEEP_PATH}")
     return 0
 

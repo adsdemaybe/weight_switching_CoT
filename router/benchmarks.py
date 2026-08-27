@@ -21,9 +21,14 @@ MMMLU_REPO = "openai/MMMLU"
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "milu_stub.jsonl")
 
-# Rows [0, EVAL_RESERVE) of a single-split benchmark are reserved for eval;
-# adapter training may only draw from beyond it.
+# Three disjoint row regions of a single-split benchmark, so nothing that
+# tunes or trains is ever scored on itself:
+#   validation  [0,            TEST_OFFSET)  — sweep/dev tuning + three-arm dev
+#   test        [TEST_OFFSET,  EVAL_RESERVE) — held-out FINAL confirmation only
+#   train       [EVAL_RESERVE, ...)          — adapter fine-tuning
+# `validation` and `test` limits must each stay <= TEST_OFFSET to not overlap.
 EVAL_RESERVE = 100
+TEST_OFFSET = 50
 
 # Every language the router can be evaluated on, in one table.
 ALL_LANGS = [
@@ -65,18 +70,36 @@ def _norm_mmmlu(row, lang_name, code):
     }
 
 
-def _load_hf(repo, config, split, limit):
+def _load_hf(repo, config, span):
     from datasets import load_dataset
-    return load_dataset(repo, config, split=f"{split}[:{limit}]")
+    return load_dataset(repo, config, split=span)
+
+
+def _milu_span(split, limit):
+    # MILU has separate `validation` and `test` splits. Training draws from the
+    # `test` split; eval/held-out both come from `validation`, at disjoint
+    # offsets so the sweep-tuning rows and the final-confirmation rows differ.
+    if split == "train":
+        return f"test[:{limit}]"
+    if split == "test":
+        return f"validation[{TEST_OFFSET}:{TEST_OFFSET + limit}]"
+    return f"validation[:{limit}]"          # validation (sweep/dev)
+
+
+def _mmmlu_span(split, limit):
+    # MMMLU ships only `test`; carve three disjoint regions out of it.
+    if split == "train":
+        return f"test[{EVAL_RESERVE}:{EVAL_RESERVE + limit}]"
+    if split == "test":
+        return f"test[{TEST_OFFSET}:{TEST_OFFSET + limit}]"
+    return f"test[:{limit}]"                 # validation (sweep/dev)
 
 
 def _load_milu(lang_name, code, split, limit):
-    # MILU ships `validation` and `test`. Eval reads validation; adapter
-    # training reads test, so the two are disjoint by construction.
-    hf_split = "validation" if split == "validation" else "test"
+    span = _milu_span(split, limit)
     for repo in (MILU_PRIMARY, MILU_MIRROR):
         try:
-            ds = _load_hf(repo, lang_name, hf_split, limit)
+            ds = _load_hf(repo, lang_name, span)
             return [_norm_milu(r, lang_name, code) for r in ds], repo
         except Exception:
             continue
@@ -84,13 +107,8 @@ def _load_milu(lang_name, code, split, limit):
 
 
 def _load_mmmlu(lang_name, code, split, limit):
-    # MMMLU ships only `test`, so train is carved out of a region past a fixed
-    # reserve held for eval — disjoint regardless of the two limit values.
     from datasets import load_dataset
-    if split == "validation":
-        span = f"test[:{limit}]"
-    else:
-        span = f"test[{EVAL_RESERVE}:{EVAL_RESERVE + limit}]"
+    span = _mmmlu_span(split, limit)
     try:
         ds = load_dataset(MMMLU_REPO, lang_name, split=span)
         return [_norm_mmmlu(r, lang_name, code) for r in ds], MMMLU_REPO

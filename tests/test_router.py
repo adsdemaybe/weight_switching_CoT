@@ -117,6 +117,36 @@ def test_latin_undetectable_below_floor():
     assert detect_language(text, latin_min_chars=10) == "en"
 
 
+def test_split_regions_are_disjoint():
+    """train / validation / test must not overlap for any limit up to the
+    reserve, so no rows used to fine-tune an adapter or to tune the sweep are
+    later scored as the held-out result. Guards against silent overfitting."""
+    from collections import defaultdict
+
+    from router.benchmarks import (_milu_span, _mmmlu_span,
+                                   TEST_OFFSET, EVAL_RESERVE)
+
+    def rng(span):
+        name = span.split("[")[0]
+        inside = span[span.index("[") + 1:-1]
+        lo, hi = inside.split(":")
+        return name, (int(lo) if lo else 0), int(hi)
+
+    assert TEST_OFFSET < EVAL_RESERVE
+    limit = TEST_OFFSET                      # worst case that still must be safe
+    for span_fn in (_mmmlu_span, _milu_span):
+        by_split = defaultdict(list)
+        for which in ("validation", "test", "train"):
+            name, lo, hi = rng(span_fn(which, limit))
+            by_split[name].append((lo, hi, which))
+        # Ranges drawn from the SAME underlying HF split must not overlap.
+        for name, spans in by_split.items():
+            spans.sort()
+            for (lo1, hi1, w1), (lo2, hi2, w2) in zip(spans, spans[1:]):
+                assert hi1 <= lo2, (f"{span_fn.__name__} split '{name}': "
+                                    f"{w1} overlaps {w2}: {spans}")
+
+
 def test_milu_numeric_target_form():
     """The fixture uses '2'; the real dataset uses 'option2'. Both must work."""
     from router.benchmarks import _norm_milu
