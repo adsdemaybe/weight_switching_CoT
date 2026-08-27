@@ -239,6 +239,17 @@ reasoning traces.
   base is the strongest version of per-language embeddings that still permits
   the single continuous token history the objective requires. These two
   requirements genuinely trade off.
+- Data hygiene / no overfitting: THREE mutually-disjoint splits per language,
+  proven disjoint on real data (`check_leakage.py`, 0 overlap across MILU+MMMLU):
+    validation [0,50)    sweep + dev three-arm comparison
+    test       [50,100)  HELD-OUT — the winning sweep config is re-scored here
+    train      [100,...) adapter fine-tuning
+  MILU draws validation/test from its `validation` split, train from `test`;
+  MMMLU carves all three from `test`. The sweep SELECTS a config by its
+  validation score across many candidates, so that number is optimistic;
+  `optimize.py` reports the winner's HELD-OUT test accuracy (and the
+  validation-minus-test gap = selection bias) as the real result. Regression
+  test `test_split_regions_are_disjoint`.
 - Expert training uses plain LM loss over in-language text, NOT answer-format
   supervision. Training on "The answer is B." would teach the adapters to skip
   reasoning while the eval asks for CoT — deflating token counts in a way that
